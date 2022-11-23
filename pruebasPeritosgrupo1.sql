@@ -19,6 +19,26 @@ select * from LÍNEA_FACTURAS
 ----intento trigger para que cuando cambie el estado del siniestro a Cerrado, 
 ----tome la fecha de ese dia
 
+if OBJECT_ID('dbo.fecha_Scerrado') is not null
+  drop trigger dbo.fecha_Scerrado;
+  go
+
+
+create trigger dbo.fecha_Scerrado
+    on dbo.SINIESTRO
+after UPDATE
+as 
+begin
+
+   IF (select IdEstado from inserted) = 6 
+     begin
+	   declare @fecha_cierre as date;
+	   set @fecha_cierre = (select Fecha_cierre from inserted i);
+	   update Fecha_cierre
+	     set Fecha_cierre = date() 
+		 where Fecha_cierre = @fecha_cierre;
+     end
+end;
 
 
 
@@ -26,11 +46,7 @@ select * from LÍNEA_FACTURAS
 
 
 
-
-
-
-
-
+------
 if OBJECT_ID('dbo.sumcasper') is not null
   drop trigger dbo.sumcasper;
   go
